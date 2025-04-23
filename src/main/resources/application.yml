@@ -4,11 +4,14 @@ spring:
   ai:
     ollama:
       chat:
-        model: dolphin-llama3
+        model: deepseek-r1:1.5b
   datasource:
-      url: jdbc:postgresql://localhost:5432/falaidoutor
-      username: ${secrets.db-username}
-      password: ${secrets.db-password}
+      url: jdbc:postgresql://localhost:5433/falaidoutor
+      username: postgres
+      password: admin123
+    #      url: jdbc:postgresql://localhost:5432/falaidoutor
+    #      username: ${secrets.db-username}
+    #      password: ${secrets.db-password}
       driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true
