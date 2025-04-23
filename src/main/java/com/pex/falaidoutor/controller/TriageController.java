@@ -1,7 +1,9 @@
 package com.pex.falaidoutor.controller;
 
 import com.pex.falaidoutor.model.dto.TriageDTO;
+import com.pex.falaidoutor.model.entity.QueueTriage;
 import com.pex.falaidoutor.model.entity.Triage;
+import com.pex.falaidoutor.service.QueueTriageService;
 import com.pex.falaidoutor.service.TriageService;
 import com.pex.falaidoutor.utils.Constants;
 import org.springframework.ai.chat.client.ChatClient;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping( "/api/triage")
@@ -21,6 +24,9 @@ public class TriageController {
 
     @Autowired
     private TriageService triageService;
+
+    @Autowired
+    private QueueTriageService QTService;
 
     private final ChatClient chatClient;
 
@@ -58,7 +64,23 @@ public class TriageController {
         }
 
         String symptoms = request.get("symptoms");
+        String queueTicket = request.get("queueTicket");
+        String queueIdStr = request.get("queueId");
+        Long queueId = Long.parseLong(queueIdStr);
 
+        //Validar se a queue existe
+        Optional<QueueTriage> queueTriage = QTService.getValidQueueTriage(queueId, queueTicket);
+        if (queueTriage.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        //Validar status
+        QueueTriage qt = queueTriage.get();
+        if (qt.getStatus().getId() != 0) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        //Seguir fluxo da IA
         String chatResponse = chatClient.prompt()
                 .user(symptoms)
                 .call()
@@ -70,7 +92,11 @@ public class TriageController {
 
         Triage response = new Triage(symptoms, risk, justification);
         response.setId(null);
-        triageService.saveTriage(response);
+        Triage savedTriage = triageService.saveTriage(response);
+
+        //Salvar a triagem na queue e atualizar status para 1
+        QTService.linkTriageAndUpdateStatus(queueId, savedTriage.getId());
+
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
