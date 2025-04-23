@@ -35,6 +35,23 @@ public interface QueueTriageRepository extends JpaRepository<QueueTriage, Long> 
             @Param("queueId") Long queueId,
             @Param("triageId") Long triageId
     );
+
+    @Query(value = """
+        SELECT  
+            qt.id as queue_id,
+            p.name AS name,
+            p.gender AS gender,
+            p.age,
+            qt.queue_ticket AS queueTicket, 
+            t.risk AS risk
+        FROM falaidoutor.queue_triage qt
+        LEFT JOIN falaidoutor.patient p ON qt.patient_id = p.id 
+        LEFT JOIN falaidoutor.triage t ON qt.triage_id = t.id
+        LEFT JOIN falaidoutor.status_queue s ON qt.status_id = s.id
+        WHERE qt.status_id = 1
+        """, nativeQuery = true)
+        List<Object[]> findAllFinalizedTriageData();
+
 }
 
 
