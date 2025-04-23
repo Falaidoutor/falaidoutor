@@ -26,4 +26,12 @@ public class QueueTriageService {
 
         return new TriageAuthResponse(false, null, null, null);
     }
+
+    public Optional<QueueTriage> getValidQueueTriage(Long id, String ticket) {
+        return queueTriageRepository.findByIdAndQueueTicket(id, ticket);
+    }
+
+    public void linkTriageAndUpdateStatus(Long queueId, Long triageId) {
+        queueTriageRepository.linkTriageAndUpdateStatus(queueId, triageId);
+    }
 }

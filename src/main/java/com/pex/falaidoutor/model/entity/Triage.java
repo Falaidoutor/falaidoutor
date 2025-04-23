@@ -13,7 +13,7 @@ public class Triage {
     @Column(name = "symptoms", nullable = false, length = 1000)
     private String symptoms;
 
-    @Column(name = "risk", nullable = false, length = 100)
+    @Column(name = "risk", nullable = false, length = 1000)
     private String risk;
 
     @Column(name = "justification", nullable = false, length = 1000)
