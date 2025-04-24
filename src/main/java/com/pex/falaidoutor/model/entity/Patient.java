@@ -18,6 +18,9 @@ public class Patient {
     @Column(name = "age", nullable = false, length = 1000)
     private int age;
 
+    @Column(name = "gender", nullable = false, length = 1)
+    private char gender;
+
     public Patient() {
     }
 
@@ -51,5 +54,13 @@ public class Patient {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public char getGender() {
+        return gender;
+    }
+
+    public void setGender(char gender) {
+        this.gender = gender;
     }
 }

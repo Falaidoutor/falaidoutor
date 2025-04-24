@@ -90,6 +90,24 @@ public class TriageController {
         String risk = riskParts[0];
         String justification = riskParts[1];
 
+        // Tratar a classificação de risco
+        if (risk.contains("Urgente")) {
+            risk = "Urgente";
+        } else if (risk.contains("Grave")) {
+            risk = "Grave";
+        } else if (risk.contains("Moderado")) {
+            risk = "Moderado";
+        } else if (risk.contains("Baixo")) {
+            risk = "Baixo";
+        } else if (risk.contains("Não urgente")) {
+            risk = "Não urgente";
+        }
+
+        // Tratar a justificativa
+        if (justification.contains("Justificativa:")) {
+            justification = justification.replace("Justificativa:", "").trim();
+        }
+
         Triage response = new Triage(symptoms, risk, justification);
         response.setId(null);
         Triage savedTriage = triageService.saveTriage(response);

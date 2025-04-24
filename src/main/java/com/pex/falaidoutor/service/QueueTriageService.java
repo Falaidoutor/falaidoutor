@@ -1,11 +1,13 @@
 package com.pex.falaidoutor.service;
 
 import com.pex.falaidoutor.model.dto.FinalizedTriageDTO;
+import com.pex.falaidoutor.model.dto.TriageListDTO;
 import com.pex.falaidoutor.repository.QueueTriageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.pex.falaidoutor.model.entity.QueueTriage;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,11 +41,9 @@ public class QueueTriageService {
         queueTriageRepository.linkTriageAndUpdateStatus(queueId, triageId);
     }
 
-    public List<FinalizedTriageDTO> getFinalizedTriages() {
+    public List<TriageListDTO> getFinalizedTriages() {
         List<Object[]> results = queueTriageRepository.findAllFinalizedTriageData();
-        List<FinalizedTriageDTO> dtos = new ArrayList<FinalizedTriageDTO>();
-
-        System.out.println("Até aqui");
+        List<TriageListDTO> dtos = new ArrayList<TriageListDTO>();
 
         for (Object[] row : results) {
             Long queue_id = (Long) row[0];
@@ -53,9 +53,27 @@ public class QueueTriageService {
             String queueTicket = String.valueOf(row[4]);
             String risk = String.valueOf(row[5]);
 
-            dtos.add(new FinalizedTriageDTO(queue_id, name, gender, age, queueTicket, risk));
+            dtos.add(new TriageListDTO(queue_id, name, gender, age, queueTicket, risk));
         }
 
         return dtos;
+    }
+
+    public Optional<FinalizedTriageDTO> getQueueTriageById(Long id) {
+        QueueTriage triage = queueTriageRepository.findById(id).orElse(null);
+
+        FinalizedTriageDTO dto = new FinalizedTriageDTO(
+                triage.getId(),
+                triage.getPatient().getName(),
+                triage.getPatient().getGender(),
+                triage.getPatient().getAge(),
+                triage.getQueueTicket(),
+                triage.getTriage().getSymptoms(),
+                triage.getTriage().getRisk(),
+                triage.getTriage().getJustification(),
+                triage.getCreatedAt()
+        );
+
+        return Optional.of(dto);
     }
 }

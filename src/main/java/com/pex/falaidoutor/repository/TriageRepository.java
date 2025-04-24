@@ -2,6 +2,7 @@ package com.pex.falaidoutor.repository;
 
 import com.pex.falaidoutor.model.entity.Triage;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,5 +18,4 @@ public interface TriageRepository extends JpaRepository<Triage, Long> {
     void deleteById(Long id);
 
     List<Triage> findAll();
-
 }

@@ -21,6 +21,8 @@ public interface QueueTriageRepository extends JpaRepository<QueueTriage, Long> 
 
     Optional<QueueTriage> findByIdAndQueueTicket(Long id, String queueTicket);
 
+    Optional<QueueTriage> findById(Long id);
+
     @Modifying
     @Transactional
     @Query(value = """
@@ -49,9 +51,17 @@ public interface QueueTriageRepository extends JpaRepository<QueueTriage, Long> 
         LEFT JOIN falaidoutor.triage t ON qt.triage_id = t.id
         LEFT JOIN falaidoutor.status_queue s ON qt.status_id = s.id
         WHERE qt.status_id = 1
+        ORDER BY
+            CASE 
+                WHEN t.risk = 'Urgente' THEN 1
+                WHEN t.risk = 'Grave' THEN 2
+                WHEN t.risk = 'Moderado' THEN 3
+                WHEN t.risk = 'Baixo' THEN 4
+                WHEN t.risk = 'Nao Urgente' THEN 5
+                ELSE 6
+            END, qt.queue_ticket ASC
         """, nativeQuery = true)
         List<Object[]> findAllFinalizedTriageData();
-
 }
 
 
