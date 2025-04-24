@@ -30,8 +30,8 @@ public class QueueTriageController {
         return ResponseEntity.ok(triages);
     }
 
-    @GetMapping("/getDetails/{queueId}")
-    public ResponseEntity<FinalizedTriageDTO> getDetails(@PathVariable String queueId) {
+    @GetMapping("/getDetails")
+    public ResponseEntity<FinalizedTriageDTO> getDetails(@RequestParam String queueId) {
         Long id = Long.parseLong(queueId);
         FinalizedTriageDTO queueTriage = queueService.getQueueTriageById(id).orElse(null);
 
