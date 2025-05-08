@@ -1,11 +1,10 @@
-package com.pex.falaidoutor.controller;
+package com.pex.falaidoutor.app.controller;
 
-import com.pex.falaidoutor.model.dto.TriageDTO;
-import com.pex.falaidoutor.model.entity.QueueTriage;
-import com.pex.falaidoutor.model.entity.Triage;
-import com.pex.falaidoutor.service.QueueTriageService;
-import com.pex.falaidoutor.service.TriageService;
-import com.pex.falaidoutor.utils.Constants;
+import com.pex.falaidoutor.domain.model.entity.QueueTriage;
+import com.pex.falaidoutor.domain.model.entity.Triage;
+import com.pex.falaidoutor.app.service.QueueTriageService;
+import com.pex.falaidoutor.app.service.TriageService;
+import com.pex.falaidoutor.infra.utils.Constants;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping( "/api/triage")
+@RequestMapping( "/triage")
 @CrossOrigin(origins = "*")
 public class TriageController {
 
@@ -36,23 +35,16 @@ public class TriageController {
                 .build();
     }
 
-    @GetMapping
-    public ResponseEntity<List<Triage>> listTriages() {
-        return ResponseEntity.ok(triageService.listTriages());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Triage> getTriage(@PathVariable Long id) {
-        Triage triage = triageService.getTriageById(id);
-        if (triage != null) {
-            return ResponseEntity.ok(triage);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
-
-    @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/chat", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Triage> triageChat(@RequestBody(required = false) Map<String, String> request) {
+
+        Triage response = triageService.createTriage(request);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping(value = "/mock", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Triage> triageChatTest(@RequestBody(required = false) Map<String, String> request) {
 
         if (request == null || request.isEmpty()) {
             Triage response = new Triage(
@@ -64,21 +56,6 @@ public class TriageController {
         }
 
         String symptoms = request.get("symptoms");
-        String queueTicket = request.get("queueTicket");
-        String queueIdStr = request.get("queueId");
-        Long queueId = Long.parseLong(queueIdStr);
-
-        //Validar se a queue existe
-        Optional<QueueTriage> queueTriage = QTService.getValidQueueTriage(queueId, queueTicket);
-        if (queueTriage.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
-
-        //Validar status
-        QueueTriage qt = queueTriage.get();
-        if (qt.getStatus().getId() != 0) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
 
         //Seguir fluxo da IA
         String chatResponse = chatClient.prompt()
@@ -110,11 +87,7 @@ public class TriageController {
 
         Triage response = new Triage(symptoms, risk, justification);
         response.setId(null);
-        Triage savedTriage = triageService.saveTriage(response);
 
-        //Salvar a triagem na queue e atualizar status para 1
-        QTService.linkTriageAndUpdateStatus(queueId, savedTriage.getId());
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 }

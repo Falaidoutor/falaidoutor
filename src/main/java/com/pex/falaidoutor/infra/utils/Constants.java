@@ -1,4 +1,4 @@
-package com.pex.falaidoutor.utils;
+package com.pex.falaidoutor.infra.utils;
 
 public class Constants {
 

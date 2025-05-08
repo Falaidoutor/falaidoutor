@@ -1,4 +1,4 @@
-package com.pex.falaidoutor.model.entity;
+package com.pex.falaidoutor.domain.model.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

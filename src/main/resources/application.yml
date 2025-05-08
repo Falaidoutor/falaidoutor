@@ -4,8 +4,7 @@ spring:
   ai:
     ollama:
       chat:
-#        model: deepseek-r1:1.5b
-        model: dolphin-llama3
+        model: dolphin3
   datasource:
     url: jdbc:postgresql://localhost:5432/falaidoutor
     username: postgres
@@ -22,3 +21,6 @@ spring:
     properties:
       hibernate:
         default_schema: falaidoutor
+server:
+  servlet:
+    context-path: /api

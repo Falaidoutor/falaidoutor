@@ -1,4 +1,4 @@
-package com.pex.falaidoutor.model.dto;
+package com.pex.falaidoutor.domain.model.dto;
 
 import lombok.Data;
 

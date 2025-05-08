@@ -1,17 +1,16 @@
-package com.pex.falaidoutor.service;
+package com.pex.falaidoutor.app.service;
 
-import com.pex.falaidoutor.model.dto.FinalizedTriageDTO;
-import com.pex.falaidoutor.model.dto.TriageListDTO;
-import com.pex.falaidoutor.repository.QueueTriageRepository;
+import com.pex.falaidoutor.domain.model.dto.FinalizedTriageDTO;
+import com.pex.falaidoutor.domain.model.dto.TriageListDTO;
+import com.pex.falaidoutor.domain.repository.QueueTriageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.pex.falaidoutor.model.entity.QueueTriage;
+import com.pex.falaidoutor.domain.model.entity.QueueTriage;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import com.pex.falaidoutor.model.dto.TriageAuthResponse;
+import com.pex.falaidoutor.domain.model.dto.TriageAuthResponse;
 
 
 @Service
@@ -33,8 +32,14 @@ public class QueueTriageService {
         return new TriageAuthResponse(false, null, null, null);
     }
 
-    public Optional<QueueTriage> getValidQueueTriage(Long id, String ticket) {
-        return queueTriageRepository.findByIdAndQueueTicket(id, ticket);
+    public QueueTriage getValidQueueTriage(Long id, String ticket) {
+        Optional<QueueTriage> response = queueTriageRepository.findByIdAndQueueTicket(id, ticket);
+
+        if (response.isEmpty() || response.get().getStatus().getId() != 0) {
+            throw new RuntimeException("Ficha inválida.");
+        }
+
+        return response.get();
     }
 
     public void linkTriageAndUpdateStatus(Long queueId, Long triageId) {

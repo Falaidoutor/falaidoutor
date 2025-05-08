@@ -1,37 +1,31 @@
-package com.pex.falaidoutor.controller;
+package com.pex.falaidoutor.app.controller;
 
-import com.pex.falaidoutor.model.dto.FinalizedTriageDTO;
-import com.pex.falaidoutor.model.dto.TriageListDTO;
-import com.pex.falaidoutor.model.entity.QueueTriage;
-import com.pex.falaidoutor.service.QueueTriageService;
+import com.pex.falaidoutor.domain.model.dto.FinalizedTriageDTO;
+import com.pex.falaidoutor.domain.model.dto.TriageListDTO;
+import com.pex.falaidoutor.app.service.QueueTriageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.pex.falaidoutor.model.dto.TriageAuthResponse;
+import com.pex.falaidoutor.domain.model.dto.TriageAuthResponse;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/triage")
+@RequestMapping("/triages")
 @CrossOrigin(origins = "*")
 public class QueueTriageController {
     @Autowired
     private QueueTriageService queueService;
 
-    // Endpoint para autenticação
-    @GetMapping("/login")
-    public TriageAuthResponse authenticate(@RequestParam String cpf, @RequestParam String queueTicket) {
-        return queueService.authenticate(cpf, queueTicket);
-    }
-
-    @GetMapping("/getTriages")
+    @GetMapping()
     public ResponseEntity<List<TriageListDTO>> getFinalizedTriages() {
         List<TriageListDTO> triages = queueService.getFinalizedTriages();
         return ResponseEntity.ok(triages);
     }
 
-    @GetMapping("/getDetails")
-    public ResponseEntity<FinalizedTriageDTO> getDetails(@RequestParam String queueId) {
+    @GetMapping("/{queueId}")
+    public ResponseEntity<FinalizedTriageDTO> getDetails(@PathVariable String queueId) {
         Long id = Long.parseLong(queueId);
         FinalizedTriageDTO queueTriage = queueService.getQueueTriageById(id).orElse(null);
 
