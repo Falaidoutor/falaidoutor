@@ -1,4 +1,4 @@
-package com.pex.falaidoutor.domain.model.dto;
+package com.pex.falaidoutor.domain.model;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

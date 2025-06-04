@@ -1,7 +1,7 @@
 package com.pex.falaidoutor.app.controller;
 
 import com.pex.falaidoutor.app.service.AuthService;
-import com.pex.falaidoutor.domain.model.dto.TriageAuthResponse;
+import com.pex.falaidoutor.domain.model.TriageAuthResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

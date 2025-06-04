@@ -1,36 +1,20 @@
 package com.pex.falaidoutor.app.service;
 
-import com.pex.falaidoutor.domain.model.dto.FinalizedTriageDTO;
-import com.pex.falaidoutor.domain.model.dto.TriageListDTO;
+import com.pex.falaidoutor.domain.model.FinalizedTriageDTO;
+import com.pex.falaidoutor.domain.model.TriageListDTO;
 import com.pex.falaidoutor.domain.repository.QueueTriageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.pex.falaidoutor.domain.model.entity.QueueTriage;
+import com.pex.falaidoutor.domain.entity.QueueTriage;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import com.pex.falaidoutor.domain.model.dto.TriageAuthResponse;
 
 
 @Service
 public class QueueTriageService {
-    @Autowired
-    private QueueTriageRepository queueTriageRepository;
-
-    public TriageAuthResponse authenticate(String cpf, String queueTicket) {
-        Optional<QueueTriage> queueTriage = queueTriageRepository.findByPatientCpfAndQueueTicket(cpf, queueTicket);
-
-        if (queueTriage.isPresent()) {
-            QueueTriage qt = queueTriage.get();
-            String name = qt.getPatient().getName();
-            Long id = qt.getId();
-            Long status = qt.getStatus().getId();
-            return new TriageAuthResponse(true, name, id, status);
-        }
-
-        return new TriageAuthResponse(false, null, null, null);
-    }
+    @Autowired private QueueTriageRepository queueTriageRepository;
 
     public QueueTriage getValidQueueTriage(Long id, String ticket) {
         Optional<QueueTriage> response = queueTriageRepository.findByIdAndQueueTicket(id, ticket);

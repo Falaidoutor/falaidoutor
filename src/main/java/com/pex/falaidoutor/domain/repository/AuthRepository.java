@@ -1,6 +1,6 @@
 package com.pex.falaidoutor.domain.repository;
 
-import com.pex.falaidoutor.domain.model.entity.QueueTriage;
+import com.pex.falaidoutor.domain.entity.QueueTriage;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

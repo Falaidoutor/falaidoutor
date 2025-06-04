@@ -1,7 +1,7 @@
 package com.pex.falaidoutor.app.service;
 
-import com.pex.falaidoutor.domain.model.dto.TriageAuthResponse;
-import com.pex.falaidoutor.domain.model.entity.QueueTriage;
+import com.pex.falaidoutor.domain.model.TriageAuthResponse;
+import com.pex.falaidoutor.domain.entity.QueueTriage;
 import com.pex.falaidoutor.domain.repository.AuthRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,8 +11,7 @@ import java.util.Optional;
 @Service
 public class AuthService {
 
-    @Autowired
-    private AuthRepository authRepository;
+    @Autowired private AuthRepository authRepository;
 
     public TriageAuthResponse authenticate(String cpf, String queueTicket) {
         Optional<QueueTriage> queueTriage = authRepository.findByPatientCpfAndQueueTicket(cpf, queueTicket);

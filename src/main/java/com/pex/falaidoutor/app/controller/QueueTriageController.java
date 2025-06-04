@@ -1,15 +1,13 @@
 package com.pex.falaidoutor.app.controller;
 
-import com.pex.falaidoutor.domain.model.dto.FinalizedTriageDTO;
-import com.pex.falaidoutor.domain.model.dto.TriageListDTO;
+import com.pex.falaidoutor.domain.model.FinalizedTriageDTO;
+import com.pex.falaidoutor.domain.model.TriageListDTO;
 import com.pex.falaidoutor.app.service.QueueTriageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.pex.falaidoutor.domain.model.dto.TriageAuthResponse;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/triages")

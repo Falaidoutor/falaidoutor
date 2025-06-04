@@ -1,18 +1,14 @@
 package com.pex.falaidoutor.app.service;
 
-import com.pex.falaidoutor.domain.model.entity.QueueTriage;
-import com.pex.falaidoutor.domain.model.entity.Triage;
+import com.pex.falaidoutor.domain.entity.QueueTriage;
+import com.pex.falaidoutor.domain.entity.Triage;
 import com.pex.falaidoutor.domain.repository.TriageRepository;
-import com.pex.falaidoutor.infra.utils.Constants;
+import com.pex.falaidoutor.app.util.Constants;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class TriageService {
@@ -31,9 +27,37 @@ public class TriageService {
 
     public Triage createTriage(Map<String, String> request) {
 
-        Triage response = null;
+        Triage response = this.processRequest(request);
 
-        if (request == null || request.isEmpty()) {
+        //Validar queue
+        this.checkQueue(Long.parseLong(request.get("queueId")), request.get("queueTicket"));
+
+        // Registrar a triagem no banco de dados e atualizar status
+        Triage savedTriage = this.saveTriage(response);
+        queueTriageService.linkTriageAndUpdateStatus(Long.parseLong(request.get("queueId")), savedTriage.getId());
+
+        return response;
+    }
+
+    public Triage saveTriage(Triage triage) {
+        return triageRepository.save(triage);
+    }
+
+    public void deleteTriage(Long id) {
+        triageRepository.deleteById(id);
+    }
+
+    public QueueTriage checkQueue(Long queueId, String queueTicket) {
+        QueueTriage response = queueTriageService.getValidQueueTriage(queueId, queueTicket);
+
+        return response;
+    }
+
+    public Triage processRequest(Map<String, String> request) {
+
+        Triage response;
+
+        if (request == null || request.isEmpty() || request.get("symptoms") == null) {
             response = new Triage(
                     "Empty symptom list",
                     "Cannot return risk without symptoms.",
@@ -42,23 +66,28 @@ public class TriageService {
         }
 
         String symptoms = request.get("symptoms");
-        String queueTicket = request.get("queueTicket");
-        String queueIdStr = request.get("queueId");
-        Long queueId = Long.parseLong(queueIdStr);
 
-        //Validar queue
-        QueueTriage queueTriage = queueTriageService.getValidQueueTriage(queueId, queueTicket);
-
-        //Seguir fluxo da IA
+        // Enviar sintomas para o ChatBot
         String chatResponse = chatClient.prompt()
                 .user(symptoms)
                 .call()
                 .content();
 
-        String riskParts[] = chatResponse.split("\n\n");
-        String risk = riskParts[0];
+        String[] riskParts = chatResponse.split("\n\n");
+        String risk = this.processRisk(riskParts[0]);
         String justification = riskParts[1];
 
+        // Tratar a justificativa
+        if (justification.contains("Justificativa:")) {
+            justification = justification.replace("Justificativa:", "").trim();
+        }
+
+        response = new Triage(symptoms, risk, justification);
+        response.setId(null);
+        return response;
+    }
+
+    public String processRisk(String risk) {
         // Tratar a classificação de risco
         if (risk.contains("Urgente")) {
             risk = "Urgente";
@@ -72,27 +101,7 @@ public class TriageService {
             risk = "Não urgente";
         }
 
-        // Tratar a justificativa
-        if (justification.contains("Justificativa:")) {
-            justification = justification.replace("Justificativa:", "").trim();
-        }
-
-        response = new Triage(symptoms, risk, justification);
-        response.setId(null);
-        Triage savedTriage = this.saveTriage(response);
-
-        //Salvar a triagem na queue e atualizar status para 1
-        queueTriageService.linkTriageAndUpdateStatus(queueId, savedTriage.getId());
-
-        return response;
-    }
-
-    public Triage saveTriage(Triage triage) {
-        return triageRepository.save(triage);
-    }
-
-    public void deleteTriage(Long id) {
-        triageRepository.deleteById(id);
+        return risk;
     }
 
 }

@@ -1,4 +1,4 @@
-package com.pex.falaidoutor.domain.model.entity;
+package com.pex.falaidoutor.domain.entity;
 
 import jakarta.persistence.*;
 
