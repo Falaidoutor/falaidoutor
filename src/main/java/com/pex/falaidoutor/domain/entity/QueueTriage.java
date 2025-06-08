@@ -1,10 +1,17 @@
 package com.pex.falaidoutor.domain.entity;
+
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@Data
 @Entity
-@Table(name="queue_triage")
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "queue_triage")
 public class QueueTriage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,52 +32,4 @@ public class QueueTriage {
     private StatusQueue status;
 
     private LocalDateTime createdAt;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Triage getTriage() {
-        return triage;
-    }
-
-    public void setTriage(Triage triage) {
-        this.triage = triage;
-    }
-
-    public String getQueueTicket() {
-        return queueTicket;
-    }
-
-    public Patient getPatient() {
-        return patient;
-    }
-
-    public void setPatient(Patient patient) {
-        this.patient = patient;
-    }
-
-    public void setQueueTicket(String queueTicket) {
-        this.queueTicket = queueTicket;
-    }
-
-    public StatusQueue getStatus() {
-        return status;
-    }
-
-    public void setStatus(StatusQueue status) {
-        this.status = status;
-    }
 }

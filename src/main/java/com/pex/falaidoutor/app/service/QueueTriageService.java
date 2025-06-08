@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.pex.falaidoutor.domain.entity.QueueTriage;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -60,7 +63,8 @@ public class QueueTriageService {
                 triage.getTriage().getSymptoms(),
                 triage.getTriage().getRisk(),
                 triage.getTriage().getJustification(),
-                triage.getCreatedAt()
+                triage.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                triage.getCreatedAt().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
         );
 
         return Optional.of(dto);

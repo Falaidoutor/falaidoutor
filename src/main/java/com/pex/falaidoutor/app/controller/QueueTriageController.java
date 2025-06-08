@@ -13,8 +13,7 @@ import java.util.List;
 @RequestMapping("/triages")
 @CrossOrigin(origins = "*")
 public class QueueTriageController {
-    @Autowired
-    private QueueTriageService queueService;
+    @Autowired private QueueTriageService queueService;
 
     @GetMapping()
     public ResponseEntity<List<TriageListDTO>> getFinalizedTriages() {

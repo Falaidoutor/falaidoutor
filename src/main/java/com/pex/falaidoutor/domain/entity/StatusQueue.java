@@ -1,8 +1,14 @@
 package com.pex.falaidoutor.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "status_queue")
 public class StatusQueue {
     @Id
@@ -11,29 +17,4 @@ public class StatusQueue {
 
     @Column(name = "status_name", nullable = false)
     private String statusName;
-
-
-    public StatusQueue(Long id) {
-        this.id = id;
-    }
-
-    public StatusQueue() {
-
-    }
-
-    public String getStatusName() {
-        return statusName;
-    }
-
-    public void setStatusName(String statusName) {
-        this.statusName = statusName;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }
