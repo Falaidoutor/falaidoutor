@@ -8,6 +8,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -43,8 +44,12 @@ public class TriageService {
         return triageRepository.save(triage);
     }
 
-    public void deleteTriage(Long id) {
-        triageRepository.deleteById(id);
+    public boolean deleteTriage(Long id) {
+        if (triageRepository.existsById(id)) {
+            triageRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
     public QueueTriage checkQueue(Long queueId, String queueTicket) {
@@ -102,6 +107,16 @@ public class TriageService {
         }
 
         return risk;
+    }
+
+    public Triage getTriageById(Long id) {
+        // Implemente a busca pelo repositório
+        return triageRepository.findById(id).orElse(null);
+    }
+
+    public List<Triage> getAllTriages() {
+        // Implemente a listagem pelo repositório
+        return triageRepository.findAll();
     }
 
 }

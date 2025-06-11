@@ -32,4 +32,11 @@ public class QueueTriage {
     private StatusQueue status;
 
     private LocalDateTime createdAt;
+
+    @Column(name = "dh_incl", nullable = true)
+    private LocalDateTime dh_altr;
+
+    @ManyToOne
+    @JoinColumn(name = "cd_altr", nullable = true)
+    private Nurse cd_altr;
 }

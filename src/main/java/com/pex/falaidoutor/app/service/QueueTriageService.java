@@ -33,6 +33,10 @@ public class QueueTriageService {
         queueTriageRepository.linkTriageAndUpdateStatus(queueId, triageId);
     }
 
+    public QueueTriage createQueueTriage(QueueTriage queueTriage) {
+        return queueTriageRepository.save(queueTriage);
+    }
+
     public List<TriageListDTO> getFinalizedTriages() {
         List<Object[]> results = queueTriageRepository.findAllFinalizedTriageData();
         List<TriageListDTO> dtos = new ArrayList<TriageListDTO>();
@@ -68,5 +72,9 @@ public class QueueTriageService {
         );
 
         return Optional.of(dto);
+    }
+
+    public void deleteById(Long id) {
+        queueTriageRepository.deleteById(id);
     }
 }

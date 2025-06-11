@@ -1,5 +1,6 @@
 package com.pex.falaidoutor.app.controller;
 
+import com.pex.falaidoutor.domain.entity.QueueTriage;
 import com.pex.falaidoutor.domain.model.FinalizedTriageDTO;
 import com.pex.falaidoutor.domain.model.TriageListDTO;
 import com.pex.falaidoutor.app.service.QueueTriageService;
@@ -14,6 +15,12 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class QueueTriageController {
     @Autowired private QueueTriageService queueService;
+
+    @PostMapping
+    public ResponseEntity<QueueTriage> create(@RequestBody QueueTriage queueTriage) {
+        QueueTriage created = queueService.createQueueTriage(queueTriage);
+        return ResponseEntity.ok(created);
+    }
 
     @GetMapping()
     public ResponseEntity<List<TriageListDTO>> getFinalizedTriages() {
@@ -31,5 +38,11 @@ public class QueueTriageController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        queueService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
