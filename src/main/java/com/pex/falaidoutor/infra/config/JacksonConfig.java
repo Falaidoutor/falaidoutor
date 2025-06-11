@@ -1,4 +1,4 @@
-package com.pex.falaidoutor.config;
+package com.pex.falaidoutor.infra.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;

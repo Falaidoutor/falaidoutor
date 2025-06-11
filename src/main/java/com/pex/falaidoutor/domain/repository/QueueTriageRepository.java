@@ -1,7 +1,7 @@
-package com.pex.falaidoutor.repository;
+package com.pex.falaidoutor.domain.repository;
 
-import com.pex.falaidoutor.model.entity.QueueTriage;
-import com.pex.falaidoutor.model.entity.StatusQueue;
+import com.pex.falaidoutor.domain.entity.QueueTriage;
+import com.pex.falaidoutor.domain.entity.StatusQueue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -20,6 +20,8 @@ public interface QueueTriageRepository extends JpaRepository<QueueTriage, Long> 
     List<QueueTriage> findByStatus(StatusQueue status);
 
     Optional<QueueTriage> findByIdAndQueueTicket(Long id, String queueTicket);
+
+    Optional<QueueTriage> findById(Long id);
 
     @Modifying
     @Transactional
@@ -49,9 +51,17 @@ public interface QueueTriageRepository extends JpaRepository<QueueTriage, Long> 
         LEFT JOIN falaidoutor.triage t ON qt.triage_id = t.id
         LEFT JOIN falaidoutor.status_queue s ON qt.status_id = s.id
         WHERE qt.status_id = 1
+        ORDER BY
+            CASE 
+                WHEN t.risk = 'Urgente' THEN 1
+                WHEN t.risk = 'Grave' THEN 2
+                WHEN t.risk = 'Moderado' THEN 3
+                WHEN t.risk = 'Baixo' THEN 4
+                WHEN t.risk = 'Nao Urgente' THEN 5
+                ELSE 6
+            END, qt.queue_ticket ASC
         """, nativeQuery = true)
         List<Object[]> findAllFinalizedTriageData();
-
 }
 
 
