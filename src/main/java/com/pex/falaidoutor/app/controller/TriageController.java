@@ -45,3 +45,4 @@ public class TriageController {
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 }
+
